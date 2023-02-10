@@ -12,6 +12,7 @@ networks:
 
 services:
   app:
+    container_name: yt-dl-service
     build:
       context: .
       dockerfile: Dockerfile
@@ -22,6 +23,8 @@ services:
         condition: service_started
     networks:
       - test
+    volumes:
+      - ./data:/data
 
   db:
     image: mariadb:latest
