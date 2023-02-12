@@ -1,4 +1,4 @@
-create database ytdl;
+create database if not exists ytdl;
 use ytdl;
 create table videos
 (
