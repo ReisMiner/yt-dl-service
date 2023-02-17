@@ -1,10 +1,13 @@
 create database if not exists ytdl;
-use ytdl;
-create table videos
+create table ytdl.videos
 (
-    id         int auto_increment,
-    url        text null,
-    title      text null,
-    only_audio bool null,
-    primary key (id)
+    id         int auto_increment
+        primary key,
+    url        text       null,
+    title      text       null,
+    file_path  text       null,
+    length     int        null,
+    audio_only tinyint(1) null
 );
+
+
