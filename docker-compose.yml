@@ -25,6 +25,8 @@ services:
       - test
     volumes:
       - ./data:/data
+    env_file:
+      - .env
 
   db:
     image: mariadb:latest
