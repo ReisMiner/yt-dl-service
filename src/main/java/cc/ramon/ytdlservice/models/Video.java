@@ -13,17 +13,37 @@ public class Video {
     private String filePath;
     private int length;
     private boolean audioOnly;
+    private int quality;
+    private boolean isInQueue;
+
+    public int getQuality() {
+        return quality;
+    }
+
+    public void setQuality(int quality) {
+        this.quality = quality;
+    }
+
+    public boolean isInQueue() {
+        return isInQueue;
+    }
+
+    public void setInQueue(boolean inQueue) {
+        isInQueue = inQueue;
+    }
 
     public Video() {
 
     }
 
-    public Video(String url, String title, String filePath, int length, boolean audioOnly) {
+    public Video(String url, String title, String filePath, int length, boolean audioOnly, int quality, boolean isInQueue) {
         this.url = url;
         this.title = title;
         this.filePath = filePath;
         this.length = length;
         this.audioOnly = audioOnly;
+        this.quality = quality;
+        this.isInQueue = isInQueue;
     }
 
     public Video(Video v) {
@@ -32,6 +52,8 @@ public class Video {
         this.filePath = v.filePath;
         this.length = v.length;
         this.audioOnly = v.audioOnly;
+        this.quality = v.quality;
+        this.isInQueue = v.isInQueue;
     }
 
     public Integer getId() {
