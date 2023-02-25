@@ -1,7 +1,6 @@
 package cc.ramon.ytdlservice.controllers;
 
 import cc.ramon.ytdlservice.Runner.Downloader;
-import cc.ramon.ytdlservice.Runner.QueueTask;
 import cc.ramon.ytdlservice.Runner.QueueTaskFactory;
 import cc.ramon.ytdlservice.models.Video;
 import cc.ramon.ytdlservice.repositories.VideoRepository;

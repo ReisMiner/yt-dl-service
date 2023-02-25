@@ -5,6 +5,7 @@ create table ytdl.videos
         primary key,
     url         text       null,
     title       text       null,
+    channel     text       null,
     file_path   text       null,
     length      int        null,
     audio_only  tinyint(1) null,

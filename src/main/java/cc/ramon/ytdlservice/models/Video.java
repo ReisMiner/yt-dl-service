@@ -10,35 +10,21 @@ public class Video {
     private Integer id;
     private String url;
     private String title;
+    private String channel;
     private String filePath;
     private int length;
     private boolean audioOnly;
     private int quality;
     private boolean isInQueue;
 
-    public int getQuality() {
-        return quality;
-    }
-
-    public void setQuality(int quality) {
-        this.quality = quality;
-    }
-
-    public boolean isInQueue() {
-        return isInQueue;
-    }
-
-    public void setInQueue(boolean inQueue) {
-        isInQueue = inQueue;
-    }
-
     public Video() {
 
     }
 
-    public Video(String url, String title, String filePath, int length, boolean audioOnly, int quality, boolean isInQueue) {
+    public Video(String url, String title, String channel, String filePath, int length, boolean audioOnly, int quality, boolean isInQueue) {
         this.url = url;
         this.title = title;
+        this.channel = channel;
         this.filePath = filePath;
         this.length = length;
         this.audioOnly = audioOnly;
@@ -49,6 +35,7 @@ public class Video {
     public Video(Video v) {
         this.url = v.url;
         this.title = v.title;
+        this.channel = v.channel;
         this.filePath = v.filePath;
         this.length = v.length;
         this.audioOnly = v.audioOnly;
@@ -104,16 +91,41 @@ public class Video {
         this.audioOnly = audioOnly;
     }
 
+    public int getQuality() {
+        return quality;
+    }
+
+    public void setQuality(int quality) {
+        this.quality = quality;
+    }
+
+    public boolean isInQueue() {
+        return isInQueue;
+    }
+
+    public void setInQueue(boolean inQueue) {
+        isInQueue = inQueue;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
     @Override
     public String toString() {
         return "Video{" +
                 "id=" + id +
                 ", url='" + url + '\'' +
                 ", title='" + title + '\'' +
+                ", channel='" + channel + '\'' +
                 ", filePath='" + filePath + '\'' +
                 ", length=" + length +
                 ", audioOnly=" + audioOnly +
+                ", quality=" + quality +
+                ", isInQueue=" + isInQueue +
                 '}';
     }
-
 }
