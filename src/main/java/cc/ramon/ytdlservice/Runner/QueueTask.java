@@ -8,34 +8,40 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class QueueTask implements Runnable {
-    public void setVideo(Video video) {
-        this.video = video;
-    }
-
     public QueueTask(Video video, VideoRepository vr) {
         this.videoRepository = vr;
         this.video = video;
     }
 
-    private Video video;
-    private VideoRepository videoRepository;
+    private final Video video;
+    private final VideoRepository videoRepository;
 
     @Override
     public void run() {
-        //TODO: Actual video URL
         //TODO: custom fileformat (mp4 &mp3)
-        //TODO: custom video quality
         //TODO: Define download path
+        //TODO: video length
         System.out.println("Started new Video Download: " + video);
         Video updatedVid = videoRepository.getReferenceById(video.getId());
         Runtime runtime = Runtime.getRuntime();
         try {
-            Process process = runtime.exec("youtube-dl --extract-audio --audio-format mp3 https://youtube.com/watch?v=0JyCZpCZ6NA");
+            StringBuilder command = new StringBuilder("youtube-dl ");
+            if (video.isAudioOnly())
+                command.append("--extract-audio --audio-format mp3 ");
+
+            //TODO: custom video quality
+            //if(video.getQuality() != 0)
+
+            command.append(video.getUrl());
+            Process process = runtime.exec(command.toString());
             process.waitFor();
 
-            process = runtime.exec("youtube-dl --get-filename https://youtube.com/watch?v=0JyCZpCZ6NA");
+            process = runtime.exec("youtube-dl --get-filename " + video.getUrl());
             BufferedReader lineReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            updatedVid.setFilePath(lineReader.lines().findFirst().get());
+            String fileName = lineReader.lines().findFirst().get();
+            if (video.isAudioOnly())
+                fileName = fileName.replace(".webm", ".mp3");
+            updatedVid.setFilePath("./" + fileName);
 
         } catch (Exception ignore) {
             updatedVid.setFilePath(null);
