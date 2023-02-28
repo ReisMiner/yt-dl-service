@@ -12,7 +12,7 @@ public class Video {
     private String title;
     private String channel;
     private String filePath;
-    private int length;
+    private String length;
     private boolean audioOnly;
     private int quality;
     private boolean isInQueue;
@@ -21,7 +21,7 @@ public class Video {
 
     }
 
-    public Video(String url, String title, String channel, String filePath, int length, boolean audioOnly, int quality, boolean isInQueue) {
+    public Video(String url, String title, String channel, String filePath, String length, boolean audioOnly, int quality, boolean isInQueue) {
         this.url = url;
         this.title = title;
         this.channel = channel;
@@ -75,11 +75,11 @@ public class Video {
         this.filePath = filePath;
     }
 
-    public int getLength() {
+    public String getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(String length) {
         this.length = length;
     }
 

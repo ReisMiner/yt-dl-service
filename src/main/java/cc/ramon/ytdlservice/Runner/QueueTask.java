@@ -20,7 +20,6 @@ public class QueueTask implements Runnable {
     public void run() {
         //TODO: custom fileformat (mp4 &mp3)
         //TODO: Define download path
-        //TODO: video length
         System.out.println("Started new Video Download: " + video);
         Video updatedVid = videoRepository.getReferenceById(video.getId());
         Runtime runtime = Runtime.getRuntime();
@@ -36,12 +35,17 @@ public class QueueTask implements Runnable {
             Process process = runtime.exec(command.toString());
             process.waitFor();
 
+            //File name with extension
             process = runtime.exec("youtube-dl --get-filename " + video.getUrl());
             BufferedReader lineReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String fileName = lineReader.lines().findFirst().get();
             if (video.isAudioOnly())
                 fileName = fileName.replace(".webm", ".mp3");
             updatedVid.setFilePath("./" + fileName);
+
+            process = runtime.exec("youtube-dl --get-duration " + video.getUrl());
+            lineReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            updatedVid.setLength(lineReader.lines().findFirst().get().toString());
 
         } catch (Exception ignore) {
             updatedVid.setFilePath(null);
