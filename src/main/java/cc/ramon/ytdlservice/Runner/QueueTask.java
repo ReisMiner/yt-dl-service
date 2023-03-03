@@ -2,6 +2,9 @@ package cc.ramon.ytdlservice.Runner;
 
 import cc.ramon.ytdlservice.models.Video;
 import cc.ramon.ytdlservice.repositories.VideoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,15 +19,16 @@ public class QueueTask implements Runnable {
     private final Video video;
     private final VideoRepository videoRepository;
 
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Override
     public void run() {
-        //TODO: custom fileformat (mp4 &mp3)
         //TODO: Define download path
-        System.out.println("Started new Video Download: " + video);
+        logger.info("Started new Video Download: " + video);
         Video updatedVid = videoRepository.getReferenceById(video.getId());
         Runtime runtime = Runtime.getRuntime();
         try {
-            StringBuilder command = new StringBuilder("youtube-dl ");
+            StringBuilder command = new StringBuilder("youtube-dl -o \"%(channel)s - %(title)s.%(ext)s\" ");
             if (video.isAudioOnly())
                 command.append("--extract-audio --audio-format mp3 ");
 
@@ -33,24 +37,33 @@ public class QueueTask implements Runnable {
 
             command.append(video.getUrl());
             Process process = runtime.exec(command.toString());
-            process.waitFor();
+            BufferedReader lineReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String s = null;
+            while ((s = lineReader.readLine()) != null)
+                logger.info(s);
+
+
+            //use < as separator cuz yt does not allow that in titles
+            process = runtime.exec("youtube-dl --print \"%(channel)s<%(duration)s<%(title)s\" " + video.getUrl());
+            lineReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String[] infos = lineReader.lines().findFirst().get().toString().split("<");
+
+            updatedVid.setChannel(infos[0]);
+            updatedVid.setLength(Integer.parseInt(infos[1]));
+            updatedVid.setTitle(infos[2]);
 
             //File name with extension
-            process = runtime.exec("youtube-dl --get-filename " + video.getUrl());
-            BufferedReader lineReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String fileName = lineReader.lines().findFirst().get();
+            String fileName = infos[0] + " - " + infos[2];
             if (video.isAudioOnly())
-                fileName = fileName.replace(".webm", ".mp3");
+                fileName += ".mp3";
+            else
+                fileName += ".webm";
             updatedVid.setFilePath("./" + fileName);
-
-            process = runtime.exec("youtube-dl --get-duration " + video.getUrl());
-            lineReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            updatedVid.setLength(lineReader.lines().findFirst().get().toString());
-
         } catch (Exception ignore) {
             updatedVid.setFilePath(null);
         }
         updatedVid.setInQueue(false);
+        logger.info("Download of " + video + " done!");
         videoRepository.save(updatedVid);
     }
 }
