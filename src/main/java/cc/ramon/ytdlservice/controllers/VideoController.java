@@ -32,6 +32,7 @@ public class VideoController {
     @Autowired
     private QueueTaskFactory queueTaskFactory;
 
+    @CrossOrigin
     @PostMapping(base + "/queue")
     public Video queueVideo(@RequestBody Video body) {
         body.setInQueue(true);
@@ -41,11 +42,13 @@ public class VideoController {
         return savedVid;
     }
 
+    @CrossOrigin
     @GetMapping(base + "/all")
     public List<Video> allVideos() {
         return videoRepository.findAll();
     }
 
+    @CrossOrigin
     @GetMapping(path = base + "/download")
     public ResponseEntity<Resource> download(@RequestParam int id) {
 
