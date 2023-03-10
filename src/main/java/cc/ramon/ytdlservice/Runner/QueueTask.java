@@ -4,11 +4,10 @@ import cc.ramon.ytdlservice.models.Video;
 import cc.ramon.ytdlservice.repositories.VideoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class QueueTask implements Runnable {
     public QueueTask(Video video, VideoRepository vr) {
@@ -28,23 +27,35 @@ public class QueueTask implements Runnable {
         Video updatedVid = videoRepository.getReferenceById(video.getId());
         Runtime runtime = Runtime.getRuntime();
         try {
-            StringBuilder command = new StringBuilder("youtube-dl -o \"%(channel)s - %(title)s.%(ext)s\" ");
-            if (video.isAudioOnly())
-                command.append("--extract-audio --audio-format mp3 ");
+            ArrayList<String> command = new ArrayList<>();
+            command.add("youtube-dl");
+            command.add("-o");
+            command.add("%(channel)s - %(title)s.%(ext)s");
+            if (video.isAudioOnly()) {
+                command.add("--extract-audio");
+                command.add("--audio-format");
+                command.add("mp3");
+            }
 
             //TODO: custom video quality
             //if(video.getQuality() != 0)
 
-            command.append(video.getUrl());
-            Process process = runtime.exec(command.toString());
+            command.add(video.getUrl());
+            Process process = runtime.exec(command.toArray(new String[0]));
             BufferedReader lineReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String s = null;
             while ((s = lineReader.readLine()) != null)
                 logger.info(s);
 
 
+            command.clear();
+            command.add("youtube-dl");
+            command.add("--print");
             //use < as separator cuz yt does not allow that in titles
-            process = runtime.exec("youtube-dl --print \"%(channel)s<%(duration)s<%(title)s\" " + video.getUrl());
+            command.add("%(channel)s<%(duration)s<%(title)s");
+            command.add(video.getUrl());
+
+            process = runtime.exec(command.toArray(new String[0]));
             lineReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String[] infos = lineReader.lines().findFirst().get().toString().split("<");
 
