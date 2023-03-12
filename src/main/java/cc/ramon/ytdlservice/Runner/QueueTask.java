@@ -30,7 +30,7 @@ public class QueueTask implements Runnable {
             ArrayList<String> command = new ArrayList<>();
             command.add("youtube-dl");
             command.add("-o");
-            command.add("%(channel)s - %(title)s.%(ext)s");
+            command.add("%(channel)s - %(id)s.%(ext)s");
             if (video.isAudioOnly()) {
                 command.add("--extract-audio");
                 command.add("--audio-format");
@@ -52,7 +52,7 @@ public class QueueTask implements Runnable {
             command.add("youtube-dl");
             command.add("--print");
             //use < as separator cuz yt does not allow that in titles
-            command.add("%(channel)s<%(duration)s<%(title)s");
+            command.add("%(channel)s<%(duration)s<%(title)s<%(id)s");
             command.add(video.getUrl());
 
             process = runtime.exec(command.toArray(new String[0]));
@@ -64,13 +64,16 @@ public class QueueTask implements Runnable {
             updatedVid.setTitle(infos[2]);
 
             //File name with extension
-            String fileName = infos[0] + " - " + infos[2];
+            String fileName = infos[0] + " - " + infos[3];
             if (video.isAudioOnly())
                 fileName += ".mp3";
             else
                 fileName += ".webm";
+
             updatedVid.setFilePath("./" + fileName);
-        } catch (Exception ignore) {
+
+        } catch (Exception e) {
+            e.printStackTrace();
             updatedVid.setFilePath(null);
         }
         updatedVid.setInQueue(false);

@@ -6,7 +6,6 @@ import cc.ramon.ytdlservice.models.Video;
 import cc.ramon.ytdlservice.repositories.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.boot.origin.TextResourceOrigin;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,6 +34,7 @@ public class VideoController {
     @PostMapping(base + "/queue")
     public Video queueVideo(@RequestBody Video body) {
         body.setInQueue(true);
+        body.setTitle("In Queue: " + body.getUrl());
         Video savedVid = videoRepository.save(body);
 
         downloader.getExecutor().execute(queueTaskFactory.newQueueTask(savedVid));
@@ -71,6 +70,7 @@ public class VideoController {
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(resource);
         } catch (Exception e) {
+            e.printStackTrace();
             ByteArrayResource error = new ByteArrayResource("File Not found! Check the ID.".getBytes());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
