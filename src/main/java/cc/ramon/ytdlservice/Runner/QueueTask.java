@@ -4,25 +4,26 @@ import cc.ramon.ytdlservice.models.Video;
 import cc.ramon.ytdlservice.repositories.VideoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class QueueTask implements Runnable {
-    public QueueTask(Video video, VideoRepository vr) {
+    public QueueTask(Video video, VideoRepository vr, String loc) {
         this.videoRepository = vr;
         this.video = video;
+        this.saveLocation = loc;
     }
 
     private final Video video;
     private final VideoRepository videoRepository;
-
+    String saveLocation;
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void run() {
-        //TODO: Define download path
         logger.info("Started new Video Download: " + video);
         Video updatedVid = videoRepository.getReferenceById(video.getId());
         Runtime runtime = Runtime.getRuntime();
@@ -30,7 +31,7 @@ public class QueueTask implements Runnable {
             ArrayList<String> command = new ArrayList<>();
             command.add("youtube-dl");
             command.add("-o");
-            command.add("%(channel)s - %(id)s.%(ext)s");
+            command.add(saveLocation + "/%(channel)s - %(id)s.%(ext)s");
             if (video.isAudioOnly()) {
                 command.add("--extract-audio");
                 command.add("--audio-format");
