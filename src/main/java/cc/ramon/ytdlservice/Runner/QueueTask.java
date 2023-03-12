@@ -71,7 +71,7 @@ public class QueueTask implements Runnable {
             else
                 fileName += ".webm";
 
-            updatedVid.setFilePath("./" + fileName);
+            updatedVid.setFilePath(saveLocation + "/" + fileName);
 
         } catch (Exception e) {
             e.printStackTrace();
