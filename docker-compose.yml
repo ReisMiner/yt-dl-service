@@ -1,6 +1,6 @@
 #create a network and add our services into this network:
 #so, "app" service will be able to connect to the mysql database from "db" servoce by the hostname="db":
-#jdbc:mysql://db:3306/DOCKERDB
+#jdbc:mysql://yt-dl-db:3306/DOCKERDB
 
 #Connection url for connection in the DatabaseView:
 #  jdbc:mysql://0.0.0.0:13306/DOCKERDB, login=root, password=root
@@ -8,7 +8,7 @@
 version: "2.1"
 
 networks:
-  test:
+  yt-dl:
 
 services:
   app:
@@ -22,7 +22,7 @@ services:
       db:
         condition: service_started
     networks:
-      - test
+      - yt-dl
     volumes:
       - ./data:/data
     env_file:
@@ -30,10 +30,10 @@ services:
 
   db:
     image: mariadb:latest
-    container_name: db
+    container_name: yt-dl-db
     ports:
       - "13306:3306"
     networks:
-      - test
+      - yt-dl
     env_file:
       - .env
