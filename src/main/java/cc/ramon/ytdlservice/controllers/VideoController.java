@@ -34,6 +34,9 @@ public class VideoController {
     @CrossOrigin
     @PostMapping(base + "/queue")
     public Video queueVideo(@RequestBody Video body) {
+        if (body.getUrl().contains("&"))
+            body.setUrl(body.getUrl().split("&")[0]);
+
         body.setInQueue(true);
         body.setTitle("In Queue: " + body.getUrl());
         Video savedVid = videoRepository.save(body);
