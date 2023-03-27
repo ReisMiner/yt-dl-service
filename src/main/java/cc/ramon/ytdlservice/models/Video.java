@@ -32,17 +32,6 @@ public class Video {
         this.isInQueue = isInQueue;
     }
 
-    public Video(Video v) {
-        this.url = v.url;
-        this.title = v.title;
-        this.channel = v.channel;
-        this.filePath = v.filePath;
-        this.length = v.length;
-        this.audioOnly = v.audioOnly;
-        this.quality = v.quality;
-        this.isInQueue = v.isInQueue;
-    }
-
     public Integer getId() {
         return id;
     }

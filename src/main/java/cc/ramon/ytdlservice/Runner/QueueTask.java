@@ -4,7 +4,6 @@ import cc.ramon.ytdlservice.models.Video;
 import cc.ramon.ytdlservice.repositories.VideoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -31,12 +30,13 @@ public class QueueTask implements Runnable {
             ArrayList<String> command = new ArrayList<>();
             command.add("youtube-dl");
             command.add("-o");
-            command.add(saveLocation + "/%(channel)s - %(id)s.%(ext)s");
             if (video.isAudioOnly()) {
+                command.add(saveLocation + "/a-%(channel)s - %(id)s.%(ext)s");
                 command.add("--extract-audio");
                 command.add("--audio-format");
                 command.add("mp3");
             }
+            command.add(saveLocation + "/%(channel)s - %(id)s.%(ext)s");
 
             //TODO: custom video quality
             //if(video.getQuality() != 0)
@@ -67,7 +67,7 @@ public class QueueTask implements Runnable {
             //File name with extension
             String fileName = infos[0] + " - " + infos[3];
             if (video.isAudioOnly())
-                fileName += ".mp3";
+                fileName = "a-" + fileName + ".mp3";
             else
                 fileName += ".webm";
 

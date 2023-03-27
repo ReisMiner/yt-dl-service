@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface VideoRepository extends JpaRepository<Video, Integer> {
     Video findByTitle(String name);
+    List<Video> findAllByUrl(String url);
 
     Video deleteVideoById(Integer name);
 

@@ -6,7 +6,6 @@ import cc.ramon.ytdlservice.models.Video;
 import cc.ramon.ytdlservice.repositories.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +33,13 @@ public class VideoController {
     @CrossOrigin
     @PostMapping(base + "/queue")
     public Video queueVideo(@RequestBody Video body) {
+        List<Video> exists = videoRepository.findAllByUrl(body.getUrl());
+        if (exists.size() != 0) {
+            if (exists.size() == 2) return null;
+            if (exists.get(0).isAudioOnly() == body.isAudioOnly())
+                return null;
+        }
+
         if (body.getUrl().contains("&"))
             body.setUrl(body.getUrl().split("&")[0]);
 
