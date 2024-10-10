@@ -37,3 +37,5 @@ services:
       - yt-dl
     env_file:
       - .env
+    volumes:
+      - ./dbdata:/var/lib/mysql
