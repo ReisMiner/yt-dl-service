@@ -105,7 +105,7 @@ public class VideoController {
             }
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + video.getTitle() + extension + "\"");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + sanitizeHttpHeader(video.getTitle()) + extension + "\"");
             headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
             headers.add("Pragma", "no-cache");
             headers.add("Expires", "0");
@@ -123,6 +123,10 @@ public class VideoController {
             ByteArrayResource error = new ByteArrayResource("File Not found! Check the ID.".getBytes());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
+    }
+
+    private String sanitizeHttpHeader(String input) {
+        return input.replaceAll("[^A-Za-z0-9]", "");
     }
 
 }
